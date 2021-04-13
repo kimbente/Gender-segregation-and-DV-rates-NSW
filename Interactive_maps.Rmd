@@ -1,0 +1,350 @@
+---
+title: "Appendix Item: Interactive Maps"
+author: "Kim Bente"
+date: "12/06/2020"
+output:
+  html_document:
+    number_sections: yes
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+---
+
+This Appendix Item visualizes the geo-spatial distribution of Domestic Violence Rates Across NSW and some of the related factors, like Gender Segregation in the workforce.  
+
+The Shapefiles (Digital Boundaries) were retrieved from the ASGS: The Australian Statistical Geography Standard, through ABS  
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, results = "markup", include = FALSE, warning = FALSE)
+```
+
+```{r lib, warning = F, eval = T,include = FALSE}
+library(sf)
+library(mapdeck)
+```
+
+*ABS Release:* 1270.0.55.003 - Australian Statistical Geography Standard (ASGS): Volume 3 - Non ABS Structures, July 2011  
+
+*Data Cube:* New South Wales Local Government Area ASGS Non ABS Structures Edition 2011 in .csv Format   
+
+*Retrieved from:* https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.003July%202011?OpenDocument
+
+```{r loadmerge}
+# st_read function within sf library
+au.shape <- st_read("data/Q4_AUS_NSW_dom_violence/1270055003_lga_2011_aust_shape/LGA_2011_AUST.shp")
+```
+
+```{r data}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(reshape2)
+library(readr)
+library(stringr)
+library(formattable)
+library(scales)
+library(egg)
+library(zoo) # for yearmon function
+library(extrafont)
+
+options(scipen = 999) # avoid scienfic notation
+
+# Load census data
+census <- read.csv("data/Q4_AUS_NSW_dom_violence/NSW_LGA.csv")
+# Load labels (explanations of census variables)
+census_labels <- read.csv("data/Q4_AUS_NSW_dom_violence/labels.csv")
+# Load reported cases domestic violences
+dv.cases <- read.csv("data/Q4_AUS_NSW_dom_violence/DV_NSW_by_LGA.csv")
+### Additional data ###
+seifa <- read.csv("data/Q4_AUS_NSW_dom_violence/ABS_SEIFA_LGA.csv")
+# Remoteness AreasA for SA1
+SA1RA.2011 <- read.csv("data/Q4_AUS_NSW_dom_violence/remoteness/SA1_2011_RA_2011_AUST.csv")
+# Conversion from SA1 to LGA
+SA1toLGA.2011 <- read.csv("data/Q4_AUS_NSW_dom_violence/remoteness/1270055006_CG_SA1_2011_LGA_2011.csv", skip = 5)
+
+# Transpose
+dv <- as.data.frame(t(dv.cases[,-1]))
+colnames(dv) <- dv.cases$LGA
+
+### Datetiem conversions ###
+# Extracting the raw rownames (month year) into a column m.y
+dv$m.y <- rownames(dv)
+# create YEAR column (4-digit integer)
+dv$year <- ifelse((parse_number(dv$m.y)*100) > 20, ((parse_number(dv$m.y)*100) + 1900), ((parse_number(dv$m.y)*100) + 2000))
+# create MONTH column (3 char month) and set order
+dv$month <- substring(dv$m.y,1,3)
+dv$month <- factor(dv$month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+# create a combined MONTH_YEAR column (3 char month 4-digit integer (built-in S3: yearmon type))
+dv$month_year <- as.yearmon(dv$m.y,format = "%b.%y")
+
+# Aggregate by year and create dv.by.year 
+dv[c(1:140, 142)] %>% 
+  group_by(year) %>%
+  summarise_all(sum) %>% 
+  t() %>% 
+  as.data.frame(row.names = NULL) -> dv.by.year
+
+# rename
+names(dv.by.year) <- as.character(dv.by.year[1,])
+dv.by.year <- dv.by.year[-1,]
+
+# Prepare Remoteness Areas
+merge(SA1RA.2011 %>% 
+  filter(STATE_NAME_2011 == "New South Wales") %>%
+  select(SA1_MAINCODE_2011, RA_NAME_2011), SA1toLGA.2011 %>%
+  select(SA1_MAINCODE_2011, LGA_NAME_2011)) -> RA.LGA
+
+RA.LGA %>%
+  mutate(LGA = str_sub(LGA_NAME_2011, 0, -5)) %>%
+  group_by(LGA) %>%
+  summarise(LGA.TYPE = names(which.max(table((RA_NAME_2011))))) -> RA.LGA
+
+# Prepare SEIFA, IRSAD Index
+seifa %>% 
+  filter(Measure == "Score") %>%
+  filter(INDEX_TYPE == "IRSAD") %>%
+  mutate(LGA = str_sub(Local.Government.Areas...2011, 0, -5),
+         C.z.IRSAD.INV = Value) %>%
+  select(LGA, C.z.IRSAD.INV) -> irsad.AUS.2011
+
+# Select NSW LGAs
+irsad.NSW.2011 <- irsad.AUS.2011[1:153,]
+
+# Takes in Census and dv.by.year and merges it
+census %>% 
+  mutate(lga = str_sub(label, 0, -5),
+         lga.ACtype = factor(str_sub(label, -2, -2))) %>%
+  merge(merge(merge(dv.by.year %>% 
+              mutate(lga = rownames(dv.by.year)) %>%
+              select("lga", "2009", "2010", "2011", "2012", "2013"), 
+            RA.LGA, by.x = "lga", by.y = "LGA"),
+        irsad.NSW.2011,
+        by.x = "lga", by.y = "LGA")) %>%
+  mutate(LGA = lga,
+         # LGA type
+         LGA.TYPE = factor(LGA.TYPE, 
+                           levels = c("Major Cities of Australia", "Inner Regional Australia", "Outer Regional Australia", "Remote Australia", "Very Remote Australia")),
+         # create 3 balanced classes of LGAs
+         LGA.3TYPE = factor(ifelse(LGA.TYPE == "Major Cities of Australia", "Major Cities", 
+                                   ifelse(LGA.TYPE == "Inner Regional Australia", "Inner Regional", "Outer Regional/Remote")), 
+                            levels = c("Major Cities", "Inner Regional", "Outer Regional/Remote")),
+         # DV rates
+         DV.RATE.2009 = (`2009`*100000)/B3,
+         DV.RATE.2010 = (`2010`*100000)/B3,
+         DV.RATE.2011 = (`2011`*100000)/B3,
+         DV.RATE.2012 = (`2012`*100000)/B3,
+         DV.RATE.2013 = (`2013`*100000)/B3,
+         # DEPENDENT VAR
+         LOG.DV.RATE.2009 = log((`2009`*100000)/B3),
+         LOG.DV.RATE.2010 = log((`2010`*100000)/B3),
+         LOG.DV.RATE.2011 = log((`2011`*100000)/B3),
+         LOG.DV.RATE.2012 = log((`2012`*100000)/B3),
+         LOG.DV.RATE.2013 = log((`2013`*100000)/B3),
+         # CONSTANTS
+         TOTAL.POP = B3,
+         TOTAL.LF = B6664,
+         # CONTROLS
+         C.z.IRSAD.INV= scale(C.z.IRSAD.INV*-1),
+         C.PROP.INDIG = (B45/B3),
+         # ALTERNATIVE CONTROLS
+         C.z.INCOME.INV = scale(B115*-1), # invert
+         C.PROP.TSI = (B48/B3),
+         CRTL.z.PROP.COMPLY12.INV = scale(B87/B3)*-1, # INVERT Highest_year_of_school_completed_Year_12_or_equivalent_Persons	
+         C.z.PROP.ONLYENGL = scale(B63/B3), # Language_spoken_at_home_English_only_Persons
+         C.z.LOG.POP.DENSITY.INV = scale(log(B3/area_sqkm))*-1,
+         # VARIBLES
+         # unemployment
+         m.prop.unempl = B5495/100,
+         f.prop.unempl = 	B5496/100,
+         f.minus.m.prop.unempl = (B5496/100)-(B5495/100),
+         prop.unempl = B5497/100,
+         # no participation
+         m.prop.notin.lf = 	1-(B5498/100), # proportion of males
+         f.prop.notin.lf = 	1-(B5499/100),
+         f.minus.m.prop.notin.lf = (1-(B5499/100))-(1-(B5498/100)),
+         prop.notin.lf = 	1-(B5500/100),
+         # OTHERS
+         # employment
+         m.prop.empl = B5501,
+         f.prop.empl = 	B5502,
+         diff.prop.empl = B5501-B5502,
+         # nill income
+         m.prop.income.nill = B3133/B3253,
+         f.prop.income.nill = B3263/B3383,
+         diff.prop.income.nill = (B3263/B3383)-(B3133/B3253),
+         z.f.prop.fullemp.INV = scale(B6464/B2)*-1,
+         # medians
+         median.age = B109,
+         median.mortgage.repay = scale(B110),
+         median.rent = scale(B112),
+         # General prop Females
+         prop.f = B2/B3,
+         # workforce participation
+         prop.lf = B6664/B3,
+         f.perc.unemp = B5496,
+         f.perc.lf = B5499,
+         f.perc.emp = B5502,
+         m.perc.unemp = B5495,
+         m.perc.lf = B5498,
+         m.perc.emp = B5501,
+         # Male per female ratios Higher Education
+         mpf.postgrad = B5641/B5740,
+         mpf.cert = B5704/B5803,
+         mpf.non.school.ed = ((B5641+B5650+B5659+B5668+B5704)/(B5740+B5749+B5758+B5767+B5803)),
+         f.non.school.ed = (B5740+B5749+B5758+B5767+B5803)/B3,
+         # Male per female ratios of OCCUPATIONS
+         mpf.occ.managers = B7625/B7725,
+         mpf.occ.profess = B7626/B7726,
+         # For Imbalance Variable
+         # Proportions of INDUSTRIES (19): B7324 LF employed people
+         prop.agricult = (B6704 + B6914)/B7324,
+         prop.mining = (B6714 + B6924)/B7324,
+         prop.manufact = (B6724 + B6934)/B7324,
+         prop.electr = (B6734 + B6944)/B7324,
+         prop.construct = (B6744 + B6954)/B7324,
+         prop.wholesale = (B6754 + B6964)/B7324,
+         prop.retail = (B6764 + B6974)/B7324,
+         prop.accom = (B6774 + B6984)/B7324,
+         prop.transport = (B6784 + B6994)/B7324,
+         prop.inform = (B6794 + B7004)/B7324,
+         prop.finance = (B6804 + B7014)/B7324,
+         prop.rental = (B6814 + B7024)/B7324,
+         prop.profess = (B6824 + B7034)/B7324,
+         prop.admin = (B6834 + B7044)/B7324,
+         prop.public = (B6844 + B7054)/B7324,
+         prop.education = (B6854 + B7064)/B7324,
+         prop.healthcare = (B6864 + B7074)/B7324,
+         prop.arts = (B6874 + B7084)/B7324,
+         prop.others = (B6884 + B7094)/B7324,
+         prop.unstated = (B6894 + B7104)/B7324,
+         # Male Female ratio
+         mfr.agricult = (B6704/(B6914+B6704)),
+         mfr.mining = (B6714/(B6924+B6714)),
+         mfr.manufact = (B6724/(B6934+B6724)),
+         mfr.electr = (B6734/(B6944+B6734)),
+         mfr.construct = (B6744/(B6954+B6744)),
+         mfr.wholesale = (B6754/(B6964+B6754)),
+         mfr.retail = (B6764/(B6974+B6764)),
+         mfr.accom = (B6774/(B6984+B6774)),
+         mfr.transport = (B6784/(B6994+B6784)),
+         mfr.inform = (B6794/(B7004+B6794)),
+         mfr.finance = (B6804/(B7014+B6804)),
+         mfr.rental = (B6814/(B7024+B6814)),
+         mfr.profess = (B6824/(B7034+B6824)),
+         mfr.admin = (B6834/(B7044+B6834)),
+         mfr.public = (B6844/(B7054+B6844)),
+         mfr.education = (B6854/(B7064+B6854)),
+         mfr.healthcare = (B6864/(B7074+B6864)),
+         mfr.arts = (B6874/(B7084+B6874)),
+         mfr.others = (B6884/(B7094+B6884)),
+         mfr.unstated = (B6894/(B7104+B6894)),
+         # AMMECT industries
+         z.prop.AMMECT = scale(((B6704 + B6914)+(B6714 + B6924)+(B6724 + B6934)+(B6734 + B6944)+(B6744 + B6954)+(B6784 + B6994))/B6664),
+         z.mfr.AMMECT = scale((B6704+B6714+B6724+B6734+B6744+B6784)/
+                                ((B6704+B6714+B6724+B6734+B6744+B6784 )+(B6914+B6924+B6934+B6944+B6954+B6994)))) %>%
+  select(tail(names(.), 100)) -> d
+
+# Replace inf values 
+d$mfr.mining[!is.finite(d$mfr.mining)] <- 1
+d$mfr.rental[!is.finite(d$mfr.rental)] <- 1
+d$mfr.inform[!is.finite(d$mfr.inform)] <- 1
+
+# sapply(d[40:81], function(x) sum(is.finite(x)))
+# sapply(d[40:81], function(x) sum(is.na(x)))
+
+# Create igender segregation index
+d <- d %>%
+  mutate(gender.seg.by.industry.index = abs(mfr.agricult-.5)*prop.agricult +
+                              abs(mfr.mining-.5)*prop.mining +
+                              abs(mfr.manufact-.5)*prop.manufact +
+                              abs(mfr.electr-.5)*prop.electr +
+                              abs(mfr.construct-.5)*prop.construct +
+                              abs(mfr.wholesale-.5)*prop.wholesale +
+                              abs(mfr.retail-.5)*prop.retail +
+                              abs(mfr.accom-.5)*prop.accom +
+                              abs(mfr.transport-.5)*prop.transport +
+                              abs(mfr.inform-.5)*prop.inform +
+                              abs(mfr.finance-.5)*prop.finance +
+                              abs(mfr.rental-.5)*prop.rental +
+                              abs(mfr.profess-.5)*prop.profess +
+                              abs(mfr.admin-.5)*prop.admin +
+                              abs(mfr.public-.5)*prop.public +
+                              abs(mfr.education-.5)*prop.education +
+                              abs(mfr.healthcare-.5)*prop.healthcare +
+                              abs(mfr.arts-.5)*prop.arts +
+                              abs(mfr.others-.5)*prop.others +
+                              abs(mfr.unstated-.5)*prop.unstated)
+```
+
+```{r merge}
+data_shapefiles <- merge(au.shape %>%
+                           mutate(LGA_NAME11_new = str_sub(LGA_NAME11, 0, -5)), d %>% 
+                           dplyr::rename(LGA_NAME11_new = LGA) %>% 
+                           select(LGA_NAME11_new, LOG.DV.RATE.2011, C.z.IRSAD.INV, C.PROP.INDIG, gender.seg.by.industry.index), duplicateGeoms = TRUE)
+```
+
+# Domestic Violence Rates:
+
+Rates are per 100,000 people and logarithmic.  
+
+Red areas have the highest DV rates.
+
+```{r dv, include = TRUE, warning=FALSE, message=FALSE, error=FALSE}
+key <- "pk.eyJ1Ijoia2JlbjAxOTIiLCJhIjoiY2s4dGtpcGJzMDE4eDNnbnVtNjJxcXp0YiJ9.XYyU8TqB__1MOn4dOvt7ZA"
+
+mapdeck(token = key, style = mapdeck_style("light")) %>%
+          # overlaying the mapdeck background
+          add_polygon(data = data_shapefiles,
+                      layer = "polygon_layer",
+                      fill_colour = "LOG.DV.RATE.2011",
+                      fill_opacity = .7,
+                      palette = "blue2red",
+                      legend = TRUE)
+```
+
+# Gender segragtion Index:
+
+See paper for construction of the Index.   
+
+A higher Index indicates higher segregation by industry.
+
+```{r gender, include = TRUE}
+mapdeck(token = key, style = mapdeck_style("light")) %>%
+          # overlaying the mapdeck background
+          add_polygon(data = data_shapefiles,
+                      layer = "polygon_layer",
+                      fill_colour = "gender.seg.by.industry.index",
+                      fill_opacity = .7,
+                      palette = "blue2red",
+                      legend = TRUE)
+```
+
+# Disadvantage Index:
+
+A higher Index indicated more disadvantage.
+
+```{r disad, include = TRUE}
+mapdeck(token = key, style = mapdeck_style("light")) %>%
+          # overlaying the mapdeck background
+          add_polygon(data = data_shapefiles,
+                      layer = "polygon_layer",
+                      fill_colour = "C.z.IRSAD.INV",
+                      fill_opacity = .7,
+                      palette = "blue2red",
+                      legend = TRUE)
+```
+
+# Indigenous Proportion:
+
+```{r indig, include = TRUE}
+mapdeck(token = key, style = mapdeck_style("light")) %>%
+          # overlaying the mapdeck background
+          add_polygon(data = data_shapefiles,
+                      layer = "polygon_layer",
+                      fill_colour = "C.PROP.INDIG",
+                      fill_opacity = .7,
+                      palette = "blue2red",
+                      legend = TRUE)
+```

@@ -1,0 +1,946 @@
+---
+title: "Spatial analysis of Gender segregation in the workforce and the relationship to domestic violence rates in NSW LGA's "
+author: "Kim Bente"
+output:
+  pdf_document:
+    latex_engine: xelatex
+urlcolor: Periwinkle
+citecolor: Periwinkle
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, results = "markup", include = FALSE, warning = FALSE)
+```
+
+
+# Introduction 
+
+Domestic Violence (DV) is a persistent and complex problem across Australia with broad impacts on individuals, relationships, and society. These impacts include effects on Health, on children's wellbeing, on personal financial security, and it is estimated to be a substantial burden for the economy.
+Domestic Violence is a highly gendered problem: The victims are predominantly women while most offenders are men (Grech & Burgess, 2011). This is believed to be rooted in gender inequalities and historical unequal distributions of power, intersecting with social inequalities (Beverley, 2016, Chapter 2).
+
+\vspace{3mm}
+This paper aims to explain differences in Domestic Violence rates between Local Government Areas (LGAs) in New South Wales (NSW), from a perspective of gender. The paper focusses on gender segregation in the workforce, looking at gender imbalance in employment by industries and also at female participation in the workforce. The theory behind this research is the belief that highly gender segregated industries, with more men and women working in male-dominated or female-dominated workplaces respectively, shape a culture of traditional gender norms and inequality related to more violence against women. Gender balanced industries presumably create more equal interactions in the everyday work life, reducing gender roles, and reducing normalization of violence against women. Secondly, female participation in the labour force is believed to lead to more gender equity within partnerships, family and communities, by economic empowerment and lower social isolation of women. We will assess the relationship between these two gender & workplace related concepts and the DV rates of different areas of NSW by the following testable hypotheses (structure after Pollock, 2016, Chapter 3):
+\vspace{3mm}
+
+| HYPOTHESIS  I.   
+
+In a comparison of NSW LGAs, those with **higher gender segregation in the workforce** will be more likely to have higher rates of reported Domestic Violence than those with lower gender segregation in the workforce.
+
+\vspace{3mm}
+
+| HYPOTHESIS II.  
+
+In a comparison of NSW LGAs, those with **higher female disengagement from the workforce** will be more likely to have higher rates of reported Domestic Violence than those with lower female disengagement.
+
+\newpage
+
+# Literature and theory
+
+Recently more research have investigated the role of gender-related DV factors: Heise (2015) conducted large-scale, multi-national research on survey data about Partner Violence, a subset of Domestic Violence between former or current Intimate Partners, and found that norms like male authority were predictive for higher prevalence of violence in the geographical distribution. Female education and the participation of women in the formal, paying work force were found to decrease a women's risk of becoming a victim of partner violence. The impact of gender inequality onto domestic violence was also the focus of an inquiry of the Australian parliament (Beverley, 2016, Chapter 2), which summarized that Domestic Violence is both a cause and consequence of structural inequalities, social, cultural and economic, often with deeper historic roots. Partly, this is expressed by the high and persistent gender segregation in the Australian workforce, by industry, by occupation, by leadership, by remuneration, as well as by time spent in unpaid care work (Workplace Gender Equality Agency, 2019.).
+\vspace{3mm}
+
+Grech & Burgess (2011) drawing on police recorded crime records, emphasises that NSW LGAs with the highest per capita domestic violence related assault rates are predominantly remote and rural areas (see also Wendt & Hornosty, 2010, Owen & Carringston, 2014, Carrington & Hogg, 2016). Additionally, they report the over-representation of Indigenous Australians as victims but also as offenders. By collation with data from the ABS Crime Victimization survey, it becomes visible that less than half of the victims report the assaults and that under-reporting is structural and subject to biases, as also reported recently by Freeman (2018). Under-reporting becomes less with higher severity of the assault and its consequences. This proposes a strong limitation to the data, since it is hard to estimate the true proliferation of the problem. Further research based on micro data confirmed higher risk of becoming a victim of Intimate Partner Violence (IPV), a subset of DV, for indigenous women, and beyond this, established that financial stress, experience of violence as a child, lacking social support, personal stress, inability to get a job or involuntary job loss, and living in a relationship where alcohol is a problem are other factors that increase the risk (Weatherburn, 2011, Stavrou et. al., 2016, Heise, 2011).
+\vspace{3mm}
+
+As these research efforts show, Domestic Violence is a complex societal phenomenon that cannot be attributed to a single cause, but rather should be understood as part of the “ecological model of abuse” that approaches it as a concurrence of various factors on a societal and a personal level (Heise, 2011). Thus, we will analyse whether some of these association found on a personal level are mediated by census data on an geo-spatial level.
+
+\vspace{3mm}
+
+# Data and methodology 
+
+## Data
+This analysis is based on the compilation of two main **data sources**: Reported domestic violence data and Census data. The common unit of study are Local Government Areas (LGAs), that divide NSW into 154 areas as of 2011, of which 140 are included into the analysis. The omitted LGAs were excluded due to very small population sizes. The DV data contains all reported cases of domestic violence related assault, counted by LGA per month, reflecting 17 years from 1999 to 2015. The ABS Census data contains counts of population wide survey responses, aggregated by LGA, for the year 2011. Two parts of additional data will be integrated into the analysis (see Appendix for sources and details): The 2011 ABS classification into 5 Remoteness Areas measures the relative access to services. Since previous research has reported differences by degree of remoteness, we will include this classification, recoded into three similar size groups, to elaborate on the perspective of the findings. Secondly, the SEIFA Index of Relative Socio-economic Advantage and Disadvantage (IRSAD), based on 2011 Census data itself, is included into the analysis as it measures the latent concept of advantage versus disadvantage in one numeric variable. This index is a theorecial proxy for a combination of concepts identified as determinants of DV, including access to material and social resources, and thus is included to control for differences in disadvantage by area.
+
+## Variables
+The **dependent variable** is the rate of reported Domestic Violence related assaults, per 100,000 people on a logarithmic scale. We use the rate to account for the high variance in population size amongst LGAs. This rate is then log transformed to moderate the effect and regression leverage of very high DV rates, that exist for specific, remote LGAs in NSW in 2011.
+\vspace{3mm}
+
+To understand the association between the aspects of gender segregation in the workforce and domestic violence, a novel Index for gender segregation of employment by industry is calculated for each LGA as follows: The **male proportion of employment by industry** is calculated for each industry. Male proportions much higher than .5 represent male-dominated industries and male proportion much lower than .5 represent female-dominated industries. Thus, values close to 0 or 1 express gender segregation by industry. To calculate the index, the absolute difference from a .5 male proportion, reflecting magnitude of segregation, is weighted by the proprotion of employment by indutry and summed. A higher **gender segregation index** signals that many people work in highly segregated industries. 
+\vspace{3mm}
+
+Female disengagement from the workforce will be measured by the **proportion of females not participating in the workforce**. Variables like female unemployment will also be explored to see if there also is an effect from involuntary disengagemnet from the labourforce, which would rather be reflected in unemployment than in no participation in the workforce. 
+
+To control for potentially confounding factors, that were established to influece the prevalance of DV as discussed in the previous section, we will include two variables that are availble from the Census as **Controls**:
+1. **IRSAD** summerizes economic and social conditions of an areas into scores of Advantage versus Disadvantage. We will use the inverse of the index so that a higher value of our variable expresses higher disadvantage, aligned with the expectation of a positive association with DV rates. Standardization is applied for subsequent modelling purposes.
+2. **Proportion of Indigenous population**. Since high rates of Domestic Violence among Indigenous communities are known, we control for this in the model.
+
+## Methodology
+This analysis is centered around 2011 data. First, the male proportions of employment by industry will be visually explored, dividing LGAs into three classes of remoteness. Using scatterplots we will explore relationships between explanatory variables, controls and the dependent DV rates. Pearson correlation coefficient are used to assess the degree of multicollinarity, before fitting various linear regression models using subsets of variables. Fitting linear regression models allows us to control for confounding factors and to understand the uncertainty around our estimates, by looking at Standard errors. However, simple linear regression is bounded to model linear, and no complex interaction. We discuss directions, magnitude and uncertainty of the coefficients of the different variable combinations and compare r-squared values. Finally, modelling will be repeated with one set of variables for the DV rates two year prior as well as two years post the 2011 census, using the same census data, to evaluate how consistent the model is over this 5 year span of reported domestic assaults around census year. The results will be illustrated in a Dot-and-Whiskers plot, described as the "secret weapon" by American statistician Andrew Gelman (Gelman, 2005).
+
+\vspace{3mm}
+
+# Results
+
+```{r load}
+library(knitr)
+library(kableExtra)
+library(broom)
+library(purrr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(reshape2)
+library(readr)
+library(stringr)
+library(formattable)
+library(scales)
+library(egg)
+library(zoo) # for yearmon function
+library(extrafont)
+
+options(scipen = 999) # avoid scienfic notation
+
+# Load census data
+census <- read.csv("data/Q4_AUS_NSW_dom_violence/NSW_LGA.csv")
+# Load labels (explanations of census variables)
+census_labels <- read.csv("data/Q4_AUS_NSW_dom_violence/labels.csv")
+# Load reported cases domestic violences
+dv.cases <- read.csv("data/Q4_AUS_NSW_dom_violence/DV_NSW_by_LGA.csv")
+### Additional data ###
+seifa <- read.csv("data/Q4_AUS_NSW_dom_violence/ABS_SEIFA_LGA.csv")
+# Remoteness AreasA for SA1
+SA1RA.2011 <- read.csv("data/Q4_AUS_NSW_dom_violence/remoteness/SA1_2011_RA_2011_AUST.csv")
+# Conversion from SA1 to LGA
+SA1toLGA.2011 <- read.csv("data/Q4_AUS_NSW_dom_violence/remoteness/1270055006_CG_SA1_2011_LGA_2011.csv", skip = 5)
+
+# Transpose
+dv <- as.data.frame(t(dv.cases[,-1]))
+colnames(dv) <- dv.cases$LGA
+# Rows are months, columns are 140 unique NSW LGAs
+
+### Datetiem conversions ###
+# Extracting the raw rownames (month year) into a column m.y
+dv$m.y <- rownames(dv)
+# create YEAR column (4-digit integer)
+dv$year <- ifelse((parse_number(dv$m.y)*100) > 20, ((parse_number(dv$m.y)*100) + 1900), ((parse_number(dv$m.y)*100) + 2000))
+# create MONTH column (3 char month) and set order
+dv$month <- substring(dv$m.y,1,3)
+dv$month <- factor(dv$month, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))
+# create a combined MONTH_YEAR column (3 char month 4-digit integer (built-in S3: yearmon type))
+dv$month_year <- as.yearmon(dv$m.y,format = "%b.%y")
+# Inspect new variables
+
+# Aggregate by year and create dv.by.year 
+dv[c(1:140, 142)] %>% 
+  group_by(year) %>%
+  summarise_all(sum) %>% 
+  t() %>% 
+  as.data.frame(row.names = NULL) -> dv.by.year
+
+# rename
+names(dv.by.year) <- as.character(dv.by.year[1,])
+dv.by.year <- dv.by.year[-1,]
+
+# Prepare Remoteness Areas
+merge(SA1RA.2011 %>% 
+  filter(STATE_NAME_2011 == "New South Wales") %>%
+  select(SA1_MAINCODE_2011, RA_NAME_2011), SA1toLGA.2011 %>%
+  select(SA1_MAINCODE_2011, LGA_NAME_2011)) -> RA.LGA
+
+RA.LGA %>%
+  mutate(LGA = str_sub(LGA_NAME_2011, 0, -5)) %>%
+  group_by(LGA) %>%
+  summarise(LGA.TYPE = names(which.max(table((RA_NAME_2011))))) -> RA.LGA
+
+# Prepare SEIFA, IRSAD Index
+seifa %>% 
+  filter(Measure == "Score") %>%
+  filter(INDEX_TYPE == "IRSAD") %>%
+  mutate(LGA = str_sub(Local.Government.Areas...2011, 0, -5),
+         C.z.IRSAD.INV = Value) %>%
+  select(LGA, C.z.IRSAD.INV) -> irsad.AUS.2011
+
+# Select NSW LGAs
+irsad.NSW.2011 <- irsad.AUS.2011[1:153,]
+```
+
+```{r dplyr}
+# Takes in Census and dv.by.year and merges it
+census %>% 
+  mutate(lga = str_sub(label, 0, -5),
+         lga.ACtype = factor(str_sub(label, -2, -2))) %>%
+  merge(merge(merge(dv.by.year %>% 
+              mutate(lga = rownames(dv.by.year)) %>%
+              select("lga", "2009", "2010", "2011", "2012", "2013"), 
+            RA.LGA, by.x = "lga", by.y = "LGA"),
+        irsad.NSW.2011,
+        by.x = "lga", by.y = "LGA")) %>%
+  mutate(LGA = lga,
+         # LGA type
+         LGA.TYPE = factor(LGA.TYPE, 
+                           levels = c("Major Cities of Australia", "Inner Regional Australia", "Outer Regional Australia", "Remote Australia", "Very Remote Australia")),
+         # create 3 balanced classes of LGAs
+         LGA.3TYPE = factor(ifelse(LGA.TYPE == "Major Cities of Australia", "Major Cities", 
+                                   ifelse(LGA.TYPE == "Inner Regional Australia", "Inner Regional", "Outer Regional/Remote")), 
+                            levels = c("Major Cities", "Inner Regional", "Outer Regional/Remote")),
+         # DV rates
+         DV.RATE.2009 = (`2009`*100000)/B3,
+         DV.RATE.2010 = (`2010`*100000)/B3,
+         DV.RATE.2011 = (`2011`*100000)/B3,
+         DV.RATE.2012 = (`2012`*100000)/B3,
+         DV.RATE.2013 = (`2013`*100000)/B3,
+         # DEPENDENT VAR
+         LOG.DV.RATE.2009 = log((`2009`*100000)/B3),
+         LOG.DV.RATE.2010 = log((`2010`*100000)/B3),
+         LOG.DV.RATE.2011 = log((`2011`*100000)/B3),
+         LOG.DV.RATE.2012 = log((`2012`*100000)/B3),
+         LOG.DV.RATE.2013 = log((`2013`*100000)/B3),
+         # CONSTANTS
+         TOTAL.POP = B3,
+         TOTAL.LF = B6664,
+         # CONTROLS
+         C.z.IRSAD.INV= scale(C.z.IRSAD.INV*-1),
+         C.PROP.INDIG = (B45/B3),
+         # ALTERNATIVE CONTROLS
+         C.z.INCOME.INV = scale(B115*-1), # invert
+         C.PROP.TSI = (B48/B3),
+         CRTL.z.PROP.COMPLY12.INV = scale(B87/B3)*-1, # INVERT Highest_year_of_school_completed_Year_12_or_equivalent_Persons	
+         C.z.PROP.ONLYENGL = scale(B63/B3), # Language_spoken_at_home_English_only_Persons
+         C.z.LOG.POP.DENSITY.INV = scale(log(B3/area_sqkm))*-1,
+         # VARIBLES
+         # unemployment
+         m.prop.unempl = B5495/100,
+         f.prop.unempl = 	B5496/100,
+         f.minus.m.prop.unempl = (B5496/100)-(B5495/100),
+         prop.unempl = B5497/100,
+         # no participation
+         m.prop.notin.lf = 	1-(B5498/100), # proportion of males
+         f.prop.notin.lf = 	1-(B5499/100),
+         f.minus.m.prop.notin.lf = (1-(B5499/100))-(1-(B5498/100)),
+         prop.notin.lf = 	1-(B5500/100),
+         # OTHERS
+         # employment
+         m.prop.empl = B5501,
+         f.prop.empl = 	B5502,
+         diff.prop.empl = B5501-B5502,
+         # nill income
+         m.prop.income.nill = B3133/B3253,
+         f.prop.income.nill = B3263/B3383,
+         diff.prop.income.nill = (B3263/B3383)-(B3133/B3253),
+         z.f.prop.fullemp.INV = scale(B6464/B2)*-1,
+         # medians
+         median.age = B109,
+         median.mortgage.repay = scale(B110),
+         median.rent = scale(B112),
+         # General prop Females
+         prop.f = B2/B3,
+         # workforce participation
+         prop.lf = B6664/B3,
+         f.perc.unemp = B5496,
+         f.perc.lf = B5499,
+         f.perc.emp = B5502,
+         m.perc.unemp = B5495,
+         m.perc.lf = B5498,
+         m.perc.emp = B5501,
+         # Male per female ratios Higher Education
+         mpf.postgrad = B5641/B5740,
+         mpf.cert = B5704/B5803,
+         mpf.non.school.ed = ((B5641+B5650+B5659+B5668+B5704)/(B5740+B5749+B5758+B5767+B5803)),
+         f.non.school.ed = (B5740+B5749+B5758+B5767+B5803)/B3,
+         # Male per female ratios of OCCUPATIONS
+         mpf.occ.managers = B7625/B7725,
+         mpf.occ.profess = B7626/B7726,
+         # For Imbalance Variable
+         # Proportions of INDUSTRIES (19): B7324 LF employed people
+         prop.agricult = (B6704 + B6914)/B7324,
+         prop.mining = (B6714 + B6924)/B7324,
+         prop.manufact = (B6724 + B6934)/B7324,
+         prop.electr = (B6734 + B6944)/B7324,
+         prop.construct = (B6744 + B6954)/B7324,
+         prop.wholesale = (B6754 + B6964)/B7324,
+         prop.retail = (B6764 + B6974)/B7324,
+         prop.accom = (B6774 + B6984)/B7324,
+         prop.transport = (B6784 + B6994)/B7324,
+         prop.inform = (B6794 + B7004)/B7324,
+         prop.finance = (B6804 + B7014)/B7324,
+         prop.rental = (B6814 + B7024)/B7324,
+         prop.profess = (B6824 + B7034)/B7324,
+         prop.admin = (B6834 + B7044)/B7324,
+         prop.public = (B6844 + B7054)/B7324,
+         prop.education = (B6854 + B7064)/B7324,
+         prop.healthcare = (B6864 + B7074)/B7324,
+         prop.arts = (B6874 + B7084)/B7324,
+         prop.others = (B6884 + B7094)/B7324,
+         prop.unstated = (B6894 + B7104)/B7324,
+         # Male Female ratio
+         mfr.agricult = (B6704/(B6914+B6704)),
+         mfr.mining = (B6714/(B6924+B6714)),
+         mfr.manufact = (B6724/(B6934+B6724)),
+         mfr.electr = (B6734/(B6944+B6734)),
+         mfr.construct = (B6744/(B6954+B6744)),
+         mfr.wholesale = (B6754/(B6964+B6754)),
+         mfr.retail = (B6764/(B6974+B6764)),
+         mfr.accom = (B6774/(B6984+B6774)),
+         mfr.transport = (B6784/(B6994+B6784)),
+         mfr.inform = (B6794/(B7004+B6794)),
+         mfr.finance = (B6804/(B7014+B6804)),
+         mfr.rental = (B6814/(B7024+B6814)),
+         mfr.profess = (B6824/(B7034+B6824)),
+         mfr.admin = (B6834/(B7044+B6834)),
+         mfr.public = (B6844/(B7054+B6844)),
+         mfr.education = (B6854/(B7064+B6854)),
+         mfr.healthcare = (B6864/(B7074+B6864)),
+         mfr.arts = (B6874/(B7084+B6874)),
+         mfr.others = (B6884/(B7094+B6884)),
+         mfr.unstated = (B6894/(B7104+B6894)),
+         # AMMECT industries
+         z.prop.AMMECT = scale(((B6704 + B6914)+(B6714 + B6924)+(B6724 + B6934)+(B6734 + B6944)+(B6744 + B6954)+(B6784 + B6994))/B6664),
+         z.mfr.AMMECT = scale((B6704+B6714+B6724+B6734+B6744+B6784)/
+                                ((B6704+B6714+B6724+B6734+B6744+B6784 )+(B6914+B6924+B6934+B6944+B6954+B6994)))) %>%
+  select(tail(names(.), 100)) -> d
+
+# Replace inf values 
+d$mfr.mining[!is.finite(d$mfr.mining)] <- 1
+d$mfr.rental[!is.finite(d$mfr.rental)] <- 1
+d$mfr.inform[!is.finite(d$mfr.inform)] <- 1
+
+# sapply(d[40:81], function(x) sum(is.finite(x)))
+# sapply(d[40:81], function(x) sum(is.na(x)))
+
+# Create igender segregation index
+d <- d %>%
+  mutate(gender.seg.by.industry.index = abs(mfr.agricult-.5)*prop.agricult +
+                              abs(mfr.mining-.5)*prop.mining +
+                              abs(mfr.manufact-.5)*prop.manufact +
+                              abs(mfr.electr-.5)*prop.electr +
+                              abs(mfr.construct-.5)*prop.construct +
+                              abs(mfr.wholesale-.5)*prop.wholesale +
+                              abs(mfr.retail-.5)*prop.retail +
+                              abs(mfr.accom-.5)*prop.accom +
+                              abs(mfr.transport-.5)*prop.transport +
+                              abs(mfr.inform-.5)*prop.inform +
+                              abs(mfr.finance-.5)*prop.finance +
+                              abs(mfr.rental-.5)*prop.rental +
+                              abs(mfr.profess-.5)*prop.profess +
+                              abs(mfr.admin-.5)*prop.admin +
+                              abs(mfr.public-.5)*prop.public +
+                              abs(mfr.education-.5)*prop.education +
+                              abs(mfr.healthcare-.5)*prop.healthcare +
+                              abs(mfr.arts-.5)*prop.arts +
+                              abs(mfr.others-.5)*prop.others +
+                              abs(mfr.unstated-.5)*prop.unstated)
+```
+
+```{r}
+census <- census %>%
+  mutate(lga = str_sub(label, 0, -5))
+
+remotenesstype2df <- function(remotenesstyp){
+  census %>%
+  filter(lga %in% (d %>% 
+  filter(LGA.3TYPE == remotenesstyp) %>%
+  select(LGA))$LGA) %>%
+  dplyr::summarize(agricult = (colSums(.["B6704"])/(colSums(.["B6704"])+colSums(.["B6914"]))),
+         mining = (colSums(.["B6714"])/(colSums(.["B6714"])+colSums(.["B6924"]))),
+         manufact = (colSums(.["B6724"])/(colSums(.["B6724"])+colSums(.["B6934"]))),
+         electr = (colSums(.["B6734"])/(colSums(.["B6734"])+colSums(.["B6944"]))),
+         construct = (colSums(.["B6744"])/(colSums(.["B6744"])+colSums(.["B6954"]))),
+         wholesale = (colSums(.["B6754"])/(colSums(.["B6754"])+colSums(.["B6964"]))),
+         retail = (colSums(.["B6764"])/(colSums(.["B6764"])+colSums(.["B6974"]))),
+         accom = (colSums(.["B6774"])/(colSums(.["B6774"])+colSums(.["B6984"]))),
+         transport = (colSums(.["B6784"])/(colSums(.["B6784"])+colSums(.["B6994"]))),
+         inform = (colSums(.["B6794"])/(colSums(.["B6794"])+colSums(.["B6704"]))),
+         finance = (colSums(.["B6804"])/(colSums(.["B6804"])+colSums(.["B7014"]))),
+         rental = (colSums(.["B6814"])/(colSums(.["B6814"])+colSums(.["B7024"]))),
+         profess = (colSums(.["B6824"])/(colSums(.["B6824"])+colSums(.["B7034"]))),
+         admin = (colSums(.["B6834"])/(colSums(.["B6834"])+colSums(.["B7044"]))),
+         public = (colSums(.["B6844"])/(colSums(.["B6844"])+colSums(.["B7054"]))),
+         education = (colSums(.["B6854"])/(colSums(.["B6854"])+colSums(.["B7064"]))),
+         healthcare = (colSums(.["B6864"])/(colSums(.["B6864"])+colSums(.["B7074"]))),
+         arts = (colSums(.["B6874"])/(colSums(.["B6874"])+colSums(.["B7084"]))),
+         others = (colSums(.["B6884"])/(colSums(.["B6884"])+colSums(.["B7094"])))) %>%
+  pivot_longer(cols = (agricult:others), values_to = "mfr", names_to = "industry") %>% merge(
+    census %>%
+  dplyr::summarize(agricult = (colSums(.["B6704"])+colSums(.["B6914"]))/colSums(.["B7324"]),
+         mining = (colSums(.["B6714"])+colSums(.["B6924"]))/colSums(.["B7324"]),
+         manufact = (colSums(.["B6724"])+colSums(.["B6934"]))/colSums(.["B7324"]),
+         electr = (colSums(.["B6734"])+colSums(.["B6944"]))/colSums(.["B7324"]),
+         construct = (colSums(.["B6744"])+colSums(.["B6954"]))/colSums(.["B7324"]),
+         wholesale = (colSums(.["B6754"])+colSums(.["B6964"]))/colSums(.["B7324"]),
+         retail = (colSums(.["B6764"])+colSums(.["B6974"]))/colSums(.["B7324"]),
+         accom = (colSums(.["B6774"])+colSums(.["B6984"]))/colSums(.["B7324"]),
+         transport = (colSums(.["B6784"])+colSums(.["B6994"]))/colSums(.["B7324"]),
+         inform = (colSums(.["B6794"])+colSums(.["B7004"]))/colSums(.["B7324"]),
+         finance = (colSums(.["B6804"])+colSums(.["B7014"]))/colSums(.["B7324"]),
+         rental = (colSums(.["B6814"])+colSums(.["B7024"]))/colSums(.["B7324"]),
+         profess = (colSums(.["B6824"])+colSums(.["B7034"]))/colSums(.["B7324"]),
+         admin = (colSums(.["B6834"])+colSums(.["B7044"]))/colSums(.["B7324"]),
+         public = (colSums(.["B6844"])+colSums(.["B7054"]))/colSums(.["B7324"]),
+         education = (colSums(.["B6854"])+colSums(.["B7064"]))/colSums(.["B7324"]),
+         healthcare = (colSums(.["B6864"])+colSums(.["B7074"]))/colSums(.["B7324"]),
+         arts = (colSums(.["B6874"])+colSums(.["B7084"]))/colSums(.["B7324"]),
+         others = (colSums(.["B6884"])+colSums(.["B7094"]))/colSums(.["B7324"])) %>%
+  pivot_longer(cols = ("agricult":"others"), values_to = "proportion", names_to = "industry")
+  ) -> nsw.industries
+  return(nsw.industries)
+}
+
+nsw.industries.major.cities <- remotenesstype2df("Major Cities")
+nsw.industries.inner.regional <- remotenesstype2df("Inner Regional")
+nsw.industries.outer.regional.remote <- remotenesstype2df("Outer Regional/Remote")
+
+p1 <- nsw.industries.major.cities %>%
+  ggplot(aes(x = mfr, y = proportion, size = proportion))+
+  geom_point(aes(color = industry, fill = industry), alpha = .7)+
+  scale_y_continuous(breaks = seq(0,0.1,0.02), limits = c(0.0, 0.11))+
+  scale_x_continuous(breaks = seq(0.0,1.0, 0.25), limits = c(0,1))+
+  scale_size(range = c(6,20))+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  geom_vline(aes(xintercept = .5))+
+  geom_vline(aes(xintercept = .75), linetype = "dotted", color = "grey")+
+  geom_vline(aes(xintercept = .25), linetype = "dotted", color = "grey")+
+  geom_text(aes(label = industry), size = 7, family = "LM Roman 10")+
+  labs(x = "male employment proportion", y = "proportion of industry labourforce employment", 
+       title = "Metropolitan gender industry segregation, N = 48 LGAs")+
+  theme(plot.title = element_text(size = 22, family = "LM Roman 10"))+
+  theme(text = element_text(size = 10, family = "LM Roman 10"),
+        axis.text.x = element_text(size = 12, family = "LM Roman 10"),
+        axis.text.y = element_text(size = 12, family = "LM Roman 10"),
+        axis.title.x = element_text(size = 16, family = "LM Roman 10"),
+        axis.title.y = element_text(size = 16, family = "LM Roman 10"))+
+  theme(plot.background = element_rect(fill = "white", color = "floralwhite"), 
+        plot.margin = unit(c(.8, 0, .8, 0), "cm"))
+
+p2 <- nsw.industries.inner.regional %>%
+  ggplot(aes(x = mfr, y = proportion, size = proportion))+
+  geom_point(aes(color = industry, fill = industry), alpha = .7)+
+  scale_y_continuous(breaks = seq(0,0.1,0.02), limits = c(0.0, 0.11))+
+  scale_x_continuous(breaks = seq(0.0,1.0, 0.25), limits = c(0,1))+
+  scale_size(range = c(6,20))+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  geom_vline(aes(xintercept = .5))+
+  geom_vline(aes(xintercept = .75), linetype = "dotted", color = "grey")+
+  geom_vline(aes(xintercept = .25), linetype = "dotted", color = "grey")+
+  geom_text(aes(label = industry), size = 7, family = "LM Roman 10")+
+  labs(x = "male employment proportion", y = "proportion of industry labourforce employment", 
+       title = "Inner Regional gender industry segregation, N = 53 LGAs")+
+  theme(plot.title = element_text(size = 22, family = "LM Roman 10"))+
+  theme(text = element_text(size = 10, family = "LM Roman 10"),
+        axis.text.x = element_text(size = 12, family = "LM Roman 10"),
+        axis.text.y = element_text(size = 12, family = "LM Roman 10"),
+        axis.title.x = element_text(size = 16, family = "LM Roman 10"),
+        axis.title.y = element_text(size = 16, family = "LM Roman 10"))+
+  theme(plot.background = element_rect(fill = "white", color = "floralwhite"), 
+        plot.margin = unit(c(.8, 0, .8, 0), "cm"))
+
+p3 <- nsw.industries.outer.regional.remote %>%
+  ggplot(aes(x = mfr, y = proportion, size = proportion))+
+  geom_point(aes(color = industry, fill = industry), alpha = .7)+
+  scale_y_continuous(breaks = seq(0,0.1,0.02), limits = c(0.0, 0.11))+
+  scale_x_continuous(breaks = seq(0.0,1.0, 0.25), limits = c(0,1))+
+  scale_size(range = c(6,20))+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(size = 8))+
+  geom_vline(aes(xintercept = .5))+
+  geom_vline(aes(xintercept = .75), linetype = "dotted", color = "grey")+
+  geom_vline(aes(xintercept = .25), linetype = "dotted", color = "grey")+
+  geom_text(aes(label = industry), size = 7, family = "LM Roman 10")+
+  labs(x = "male employment proportion", y = "proportion of industry labourforce employment", 
+       title = "Outer Regional/Remote gender industry segregation, N = 39 LGAs")+
+  theme(plot.title = element_text(size = 22, family = "LM Roman 10"))+
+  theme(text = element_text(size = 14, family = "LM Roman 10"),
+        axis.text.x = element_text(size = 12, family = "LM Roman 10"),
+        axis.text.y = element_text(size = 12, family = "LM Roman 10"),
+        axis.title.x = element_text(size = 16, family = "LM Roman 10"),
+        axis.title.y = element_text(size = 16, family = "LM Roman 10"))+
+  theme(plot.background = element_rect(fill = "white", color = "floralwhite"), 
+        plot.margin = unit(c(.8, 0, .8, 0), "cm"))
+```
+
+Firstly, to understand NSW's gender segregation in the work force, the following three figures illustrate what industries are male- or female-dominated, for each Remoteness class.
+Each point reflects one of 19 industries, as classified by ABS (see Appendix). Industries closer to the vertical line at .5 are more gender balanced. The size of each point is proportional to the industry size.
+
+\newpage
+
+```{r include = TRUE, fig.height = 6.9, fig.width = 15}
+print(p1)
+print(p2)
+print(p3)
+```
+
+Visibly,  Metropolitan Areas have more industries that are gender-balanced than rural areas. Outer Region/Remote LGAs have many industries drifting further to the left and the right side, indicating female-dominated and male-dominated employment. Retail consistently employs most people, predominantly females, similar to the education industry. Manufacturing, Construction and Transportation are male-dominated across Remoteness. Overall, there are different patterns between urban and rural environments, although some industries, often more manual, are constantly dominated by one gender. The Gender Imbalance Index, expresses the overall degree of segregation for each LGA. To explore the data and the relationship with DV rates, the following scatterplots visualize the association directions and strengths.
+
+```{r}
+d %>% 
+  ggplot(aes(x = C.z.IRSAD.INV, y = LOG.DV.RATE.2011, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Disadvantage Index (scaled, inverted IRSAD)",
+       y = "DV Rate (log)")+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g1
+
+d %>% 
+  ggplot(aes(x = C.PROP.INDIG, y = LOG.DV.RATE.2011, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Indigenous Proportion",
+       y = "DV Rate (log)")+
+  theme_minimal()+
+  theme(legend.justification = c(1,0), 
+        legend.position=c(1,0),
+        legend.title = element_text(size = 5),
+        legend.text = element_text(size = 5))+
+  theme(legend.key.size = unit(.5, 'lines'))+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g2
+
+d %>%
+  ggplot(aes(x = gender.seg.by.industry.index, y = LOG.DV.RATE.2011, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Gender Segregation by Industry Index",
+       y = "DV Rate (log)")+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g3
+
+d %>%
+  ggplot(aes(x = m.prop.unempl, y = LOG.DV.RATE.2011, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Proportion of males unemployed",
+       y = "DV Rate (log)")+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g4
+
+d %>%
+  ggplot(aes(x = f.prop.notin.lf, y = LOG.DV.RATE.2011, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Proportion of females not in Labour fource",
+       y = "DV Rate (log)")+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g5
+
+d %>%
+  ggplot(aes(x = f.prop.notin.lf, y = C.z.IRSAD.INV, color = LGA.3TYPE))+
+  geom_point(alpha = .8, size = .5)+
+  labs(x = "Proportion of females not in Labour fource",
+       y = "Disadvantage Index (inv. z.IRSAD)")+
+  theme_minimal()+
+  theme(legend.position = "none")+
+  theme(text = element_text(size = 8, family = "LM Roman 10")) -> g6
+```
+\vspace{1mm}
+
+```{r scatters, include = TRUE}
+library("gridExtra")
+
+grid.arrange(g1, g2, g3, g4, g5, g6, 
+             ncol = 2, nrow = 3)
+```
+
+The first plot shows a clear positive linear relationship between Disadvantage and log transformed Domestic Violence rates. Similarly, as expected based on literature, proportion of Indigenous people and DV are related. As indicated by the colour of the points, that again differentiate between Metropolitan, Inner regional and Outer Regional/Remote areas, the highest DV rates and the highest proportions of Indigenous communities are found in Remote areas. The Gender segregation Index indeed shows a positive but weaker correlation with DV, and again the pattern with regards to the Remoteness classes appears. The relationship between female disengagement from the workforce and DV is more diffuse, but as the last figure shows, with higher disadvantage, more female do not participate in the workforce. To account for correlations like these, the following table shows Pearson correlation coefficients:
+
+```{r corre, include = TRUE, fig.pos="H"}
+kable(round(cor(d %>%
+  select(LOG.DV.RATE.2011, 
+          C.z.IRSAD.INV, 
+          C.PROP.INDIG,
+          gender.seg.by.industry.index,
+         m.prop.unempl,
+          f.prop.notin.lf) %>%
+  rename("DV rate (log)" = "LOG.DV.RATE.2011",
+         "Disadvantage" = "C.z.IRSAD.INV",
+         "Indig. Prop." = "C.PROP.INDIG",
+         "Gender seg." = "gender.seg.by.industry.index",
+         "M. unempl" = "m.prop.unempl",
+         "F. not in LF" = "f.prop.notin.lf")), 2),
+  caption = "Pearson Correlation coefficients between variables", 
+  "latex", 
+  booktabs = T)
+```
+
+Clearly, we have strong **multicollinearity** between our explanatory and control variables, which can be problematic for modelling. With .75 the gender segregation is highly correlated with disadvantage.  Also, all variable are positively correlated with domestic violence. To deal with highly correlated predictors, four models were created using different predictor subsets. The results are summarized in the table.
+
+```{r imodels}
+d_rename <- d %>%
+  rename("DV rate, log." = "LOG.DV.RATE.2011",
+         "Disadvantage" = "C.z.IRSAD.INV",
+         "Indigenous, prop." = "C.PROP.INDIG",
+         "Gender seg. ind." = "gender.seg.by.industry.index",
+         "M. unempl. prop." = "m.prop.unempl",
+         "F. not in LF prop." = "f.prop.notin.lf")
+
+M1 <- lm(`DV rate, log.` ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`,
+            data = d_rename)
+
+M2 <- lm(`DV rate, log.` ~ 
+            `Gender seg. ind.`,
+            data = d_rename)
+
+M3 <- lm(`DV rate, log.` ~ 
+           `Gender seg. ind.`+
+           `M. unempl. prop.` +
+           `F. not in LF prop.`,
+         data = d_rename)
+
+M4 <- lm(`DV rate, log.` ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `M. unempl. prop.` +
+           `F. not in LF prop.`,
+            data = d_rename)
+
+models <- list(M1, M2, M3, M4)
+
+broom_outputs <- purrr::map(models, broom::tidy)
+model_outputs <- purrr::reduce(broom_outputs, dplyr::full_join, by = 'term')
+
+rsq <- c("R-squared", round(summary(M1)$r.squared, 3), NA, NA, round(summary(M2)$r.squared, 3), NA, NA, round(summary(M3)$r.squared, 3), NA, NA, round(summary(M4)$r.squared, 3), NA, NA)
+
+model_table <- model_outputs %>%
+  select(term, tidyselect::starts_with('estimate'), tidyselect::starts_with('std.error'), tidyselect::starts_with('p.value')) %>%
+  select(term, estimate.x, std.error.x, p.value.x, estimate.y, std.error.y, p.value.y, estimate.x.x, std.error.x.x, p.value.x.x, estimate.y.y, std.error.y.y, p.value.y.y,)
+
+model_table$term <- c("(Intercept)", "Disadvantage", "Indigenous, prop.", "Gender seg. ind.", "M. unempl. prop", "F. not in LF prop.")
+
+model_table$estimate.x <- round(model_table$estimate.x, digits=2)
+model_table$estimate.y <- round(model_table$estimate.y, digits=2)
+model_table$estimate.x.x <- round(model_table$estimate.x.x, digits=2)
+model_table$estimate.y.y <- round(model_table$estimate.y.y, digits=2)
+
+model_table$std.error.x <- round(model_table$std.error.x, digits=2)
+model_table$std.error.y <- round(model_table$std.error.y, digits=2)
+model_table$std.error.x.x <- round(model_table$std.error.x.x, digits=2)
+model_table$std.error.y.y <- round(model_table$std.error.y.y, digits=2)
+
+model_table$p.value.x <- ifelse(is.na(round(model_table$p.value.x, 3)), NA, ifelse(round(model_table$p.value.x, 3) == 0.000, "< 0.001", format(round(model_table$p.value.x, 3))))
+model_table$p.value.y <- ifelse(is.na(round(model_table$p.value.y, 3)), NA, ifelse(round(model_table$p.value.y, 3) == 0.000, "< 0.001", format(round(model_table$p.value.y, 3))))
+model_table$p.value.x.x <- ifelse(is.na(round(model_table$p.value.x.x, 3)), NA, ifelse(round(model_table$p.value.x.x, 3) == 0.000, "< 0.001", format(round(model_table$p.value.x.x, 3))))
+model_table$p.value.y.y <- ifelse(is.na(round(model_table$p.value.y.y, 3)), NA, ifelse(round(model_table$p.value.y.y, 3) == 0.000, "< 0.001", format(round(model_table$p.value.y.y, 3))))
+
+model_table <- rbind(model_table, rsq)
+```
+
+```{r modeltable, include = TRUE}
+options(knitr.kable.NA = '')
+
+kable(model_table,
+      caption = "Linear Regression Models", 
+      format = "latex", 
+      booktabs = T,
+      linesep = "",
+      col.names = c("Variable", "Coeff.", "SE", "p-val.", "Coeff.", "SE", "p-val.", "Coeff.", "SE", "p-val.", "Coeff.", "SE", "p-val.")) %>% 
+  row_spec(7, bold = TRUE) %>%
+  row_spec(6, hline_after = TRUE) %>%
+      kable_styling(latex_options = c("hold_position", "scale_down"),
+                    full_width = FALSE) %>% 
+      add_header_above(c(" " = 1, 
+                 "Control Model" = 3, 
+                 "Gender Index Model" = 3,
+                 "Gender Model" = 3, 
+                 "Full Model" = 3)) %>%
+      add_header_above(c(" " = 1, 
+                         "Model" = 12))
+```
+\newpage
+
+The control model with two significant predictors already explains close to 70% of the variance in domestic violence rates. Both disadvantage and Indigenous proportion are strong predictors.
+The Gender Index model, isolating the Index created, explains 21% of the variance. LGAs with higher Gender Segregation generally have more Domestic violence.
+Combining the Index with workforce participation indicators yields an r-squared of .44: While holding other factors constant, LGAs with higher male unemployment have more DV assault per 100,000 people. However, when holding unemployment constant as well, females not participating in the workforce, reduces violence. Due to the multi-collinearity, the models need to be interpreted with caution: As with females not in the work force, when looking at the full model, the direction of the coefficient of the gender segregation index also inverts: The direction of coefficients are opposite to the direction of correlation. In the full model the male participation variable is not significantly different from zero anymore, likely, because of the correlation with disadvantage. The Full model shows that **Indigenous proportion and Disadvantage** appear to be the factors driving domestic violence rates. In the big picture, we can see that there are multiple co-occurring tendencies partially related to the **Remoteness** of the LGA, as summarizes in the following table. Non-urban LGAs on average have more Domestic violence, are more disadvantaged, have higher proportions of indigenous people, and have higher Gender segregation in the workplace, while male unemployment is rather stable.
+
+```{r include = TRUE}
+options(knitr.table.format = "latex")
+
+kable(d %>% 
+  group_by(LGA.3TYPE) %>%
+  summarize("N" = n(),
+            "Disad." = round(median(C.z.IRSAD.INV), 2),
+            "Indig." = round(median(C.PROP.INDIG), 3),
+            "Gender Seg." = round(median(gender.seg.by.industry.index), 2),
+            "M. unemp" = median(prop.unempl),
+            "F. not in LF" = median(f.prop.notin.lf),
+            "DV rate" = round(median(DV.RATE.2011))) %>%
+    dplyr::rename("Remoteness" = "LGA.3TYPE"), 
+  caption = "Median values by Remoteness", 
+  "latex", 
+  booktabs = T)
+```
+
+\newpage
+When we reproduce the full model with all significant variables to predict DV rates of the years 2009 to 2013 (with constant Census data), the coefficient estimates and confidence around these are stable. 
+
+```{r}
+# 2009
+full.model.2009 <- lm(LOG.DV.RATE.2009 ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `F. not in LF prop.`,
+            data = d_rename)
+full.model.2009.summary <- summary(full.model.2009)
+
+# 2010
+full.model.2010 <- lm(LOG.DV.RATE.2010 ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `F. not in LF prop.`,
+            data = d_rename)
+full.model.2010.summary <- summary(full.model.2010)
+
+# 2011
+full.model.2011 <- lm(`DV rate, log.` ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `F. not in LF prop.`,
+            data = d_rename)
+full.model.2011.summary <- summary(full.model.2011)
+
+# 2012
+full.model.2012 <- lm(LOG.DV.RATE.2012 ~               
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `F. not in LF prop.`,
+            data = d_rename)
+full.model.2012.summary <- summary(full.model.2012)
+
+# 2013
+full.model.2013 <- lm(LOG.DV.RATE.2013 ~ 
+           `Disadvantage`+
+           `Indigenous, prop.`+
+           `Gender seg. ind.`+
+           `F. not in LF prop.`,
+            data = d_rename)
+full.model.2013.summary <- summary(full.model.2013)
+
+make.model.summary.table <- function(model.summary, year){
+  combined = data.frame("coeff.est" = model.summary$coefficients[,1],
+             "lower.CI" = model.summary$coefficients[,1]-(1.96*model.summary$coefficients[,2]),
+             "upper.CI" = model.summary$coefficients[,1]+(1.96*model.summary$coefficients[,2]),
+             "se" = (1.96*model.summary$coefficients[,2]),
+             "year" = rep(year, length(model.summary$coefficients[,1])))
+  combined$coeff.names <- factor(rownames(combined))
+  return(combined)
+}
+```
+
+```{r dotswiskers, include = TRUE, fig.height = 5, fig.width = 10}
+# Dots and wiskers plot
+rbind(make.model.summary.table(full.model.2013.summary, "2009"),
+      make.model.summary.table(full.model.2013.summary, "2010"),
+      make.model.summary.table(full.model.2011.summary, "2011"),
+      make.model.summary.table(full.model.2012.summary, "2012"),
+      make.model.summary.table(full.model.2013.summary, "2013")) %>%
+  filter(!coeff.names == "(Intercept)") %>%
+  ggplot(aes(x = coeff.est, y = coeff.names, color = year))+
+  geom_point(position = position_dodge(width = .9))+
+  geom_errorbar(aes(xmin = lower.CI, xmax = upper.CI, y = coeff.names, color = year), width=.2, position = position_dodge(width = .9))+
+  theme_minimal()+
+  geom_vline(xintercept = 0, linetype = "dotted", color = "grey")+
+  labs(x = "Coefficient estimates with confidence interval",
+       y = "",
+       title = "Coefficient drift over time with confidence")+
+  theme(legend.justification = c(1,0), 
+        legend.position=c(1,0),
+        legend.title = element_text(size = 10),
+        legend.text = element_text(size = 8))+
+  guides(colour = guide_legend(reverse = T))+
+  theme(text = element_text(size = 14, family = "LM Roman 10"))
+```
+
+# Conclusion 
+
+The visual exploration and the outputs from the linear modelling leads to the conclusion that gender segregation by industry is positively correlated with DV rates, supporting Hypothesis I., but that when we control for relative disadvantage and proportion of indigenous people, these controls seem to be the real drivers behind higher rates of domestic violence. Overall we can see that the higher rates of domestic violence co-occur with a set of patterns linked to inherent structural differences between urban and rural areas in NSW, including differences in gender segregation. As opposed to Heise's findings relating female work force participation to lower risk of DV (2015) the data neither supports nor falsifies Hypothesis II, and female disengagement from the labour force does not seem to be clearly associated with higher DV rates on a geo-spatial level of analysis. Withstanding from the labour force might have diverging reasons, and should be seen in relation to family circumstances (Heise 2011).
+\vspace{3mm}
+
+Notably this analysis is limited by the nature of the data – reported crime statistics. Freeman (2018) points out that not all cases are reported, because willingness to report differs. Other data sources, like the ABS Victim Survey, reveal that around 60% of cases are reported, with even lower rates for reoccurring victimization, but generally higher rates for severe physical assaults, so Freeman. As all data is observational, and no causal mechanisms can be inferred just from the data, as emphasized by Weatherburn (2011).  Furthermore, be aware of the ecological fallacy: The unit of analysis are areas, and no inferences should be made for individuals.The ecological framework of crime is complex and causes and consequences are hard to dissect.
+\vspace{3mm}
+
+Further research, quantitative and qualitative, should be done to understand the role of gender factors related to the population-wide issue with Domestic violence, whilst acknowledging that causes in Indigenous communities, but also between urban and rural communities may be different (Wendt & Hornosty, 2010, Owen & Carringston, 2014). Also, the interaction between personal level risk factors, like the experience of child abuse, and community level factors, like gender attitude in the workforce, should be further examines, to generate a better understanding of why these assaults within families and partnerships keep persisting and to help prevent this human rights violation.
+
+\newpage
+
+# Bibliography 
+
+All references are sorted by first apperance in text.  
+All documents were last retrieved on 2020-06-14.
+
+Beverley, L. et al. Senate Finance and Public Administration References Committee. (2016). *Domestic violence and gender inequality*. Commonwealth of Australia. Chapter 2. ISBN 978-1-76010-479-5.   
+Retrieved from the Australian Parliament Website: https://www.aph.gov.au/Parliamentary_Business/Committees/Senate/Finance_and_Public_Administration/DVgenderinequality/Report  
+
+Pollock, P. H. H. III. (2015). *The Essentials of Political Analysis* (5th ed.). SAGE Publications, Inc.. CQ Press. ISBN 978-1-5063-0583-7. Chaper 3.   
+Retrieved from: https://archive.org/details/TheEssentialsOfPoliticalAnalysisPhilipH.H.PollockIII
+
+Heise, L. L. & Kotsadam, A. (2015). *Cross-national and multilevel correlates of partner violence: an analysis of data from population-based surveys*. The Lancet Global Health, Volume 3, Issue 6, e332–e340. DOI: 10.1016/S2214-109X(15)00013-3.   
+Retrieved from the Lancet website: https://www.thelancet.com/journals/langlo/article/PIIS2214-109X(15)00013-3/fulltext?rss=yes  
+
+Workplace Gender Equality Agency (WGEA). (2019). *Gender Segregation in Australia's Workforce*. Factsheet Series. Australian Government.     
+Retrieved from WGEA: https://www.wgea.gov.au/sites/default/files/documents/18_04_Industrial_segregation.pdf
+
+Grech, K. & Burgess, M.(2011). *Trends and patterns in domestic violence assaults: 2001 to 2010*. Crime and Justice Statistics, NSW Bureau of Crime Statistics and Research, Bureau Brief (61), 1-14.  
+Retrieved from NSW Bureau of Crime Statistics and Research website: https://www.bocsar.nsw.gov.au/Documents/BB/bb61.pdf  
+
+Wendt, S. & Hornosty, J. (2010). *Understanding contexts of family violence in rural, farming communities: Implications for rural women’s health*. Rural Society, 20:1, 51-63. DOI: 10.5172/rsj.20.1.51.
+Retrieved from Taylor and Francis Online: https://www.tandfonline.com/doi/abs/10.5172/rsj.20.1.51 
+
+Owen, S. & Carrington, K. (2015) *Domestic violence (DV) service provision and the architecture of rural life: An Australian case study*. Journal of Rural Studies (39), 229-238. DOI: 10.1016/j.jrurstud.2014.11.004.
+Retrieved from QUT ePrints: https://eprints.qut.edu.au/79685/
+
+Carrington, K. & Hogg, R. (2016). *Violence in rural Australia*. In J. Stubbs & S. Tomsen (Eds.), Australian violence : crime, criminal justice and beyond (pp. 49-66). Leichhardt, NSW : The Federation Press. 
+Retrieved from: https://eprints.qut.edu.au/101391/ 
+
+Freeman, K.(2018). *Is domestic violence in NSW decreasing?*. Crime and Justice Statistics, NSW Bureau of Crime Statistics and Research, Bureau Bried (134), 1-6.  
+Retrieved from NSW Bureau of Crime Statistics and Research website: https://www.bocsar.nsw.gov.au/Documents/BB/2018-Report-Is-domestic-violence-in-NSW-decreasing-BB134.pdf  
+
+Weatherburn, D. (2011). *Personal stress, financial stress and violence against women*. Crime and Justice, NSW Bureau of Crime Statistics and Research, Contemporary Issues in Crime and Justice (151), 1-12.  
+Retrieved from NSW Bureau of Crime Statistics and Research website: https://www.bocsar.nsw.gov.au/Documents/CJB/cjb151.pdf  
+
+Stavrou, E., Poynton, S. & Weatherburn, D. (2016). *Intimate partner violence against women in Australia: related factors and help-seeking behaviours*. Crime and Justice Bulletin, NSW Bureau of Crime Statistics and Research, Contemporary Issues in Crime and Justice (200), 1-16.
+Retrieved from NSW Bureau of Crime Statistics and Research website: https://www.bocsar.nsw.gov.au/Publications/CJB/Report-2016-Intimate-partner-violence-against-women-in-Australia-CJB200.pdf 
+
+Heise, L. (2011). *What Works to Prevent Partner Violence? An Evidence Overview*. STRIVE. Commissioned by the Policy Division of the UK Department for International Development (DFID), 1-130, Chapter 1.
+Retrieved from the OECD website: http://www.oecd.org/derec/49872444.pdf
+
+Gelman, A. (2005). *The secret weapon*. Statistical Modeling, Causal Inference, and Social Science. Columbia University.   
+Retrieved blogpost from: https://statmodeling.stat.columbia.edu/2005/03/07/the_secret_weap/
+
+\newpage
+
+# Sources of additional data
+
+**Part 1:**
+
+The first part of additional data used in this project are the **Socio-Economic Indexes for Areas** (SEIFA), Australia, 2011. The data was retrieved directly from ABS, The Australian Bureau of Statistics. 2011 data was chosen to match the scores for the time of the reported crime statistics. SEIFA consists of 4 indexes. The Index of Relative Socio-economic Advantage and Disadvantage (IRSAD). This Index was created based on 2011 Census data.
+
+ABS Publication: 2033.0.55.001 - Census of Population and Housing: Socio-Economic Indexes for Areas (SEIFA), Australia, 2011  
+Data Cube: Local Government Area, Indexes, SEIFA 2011 (2033.0.55.001 lga indexes.xls)
+Retrieved from: http://stat.data.abs.gov.au/Index.aspx?DataSetCode=ABS_SEIFA_LGAm (through ABS.Stat)
+
+\vspace{12pt}
+**Part 2:**
+
+The second part of additional data, The Australian Geography Standard (ASGS) **Remoteness Structures**, was retrieved from the ABS, The Australian Bureau of Statistics. To match the time of Census and reported DV rates, the 2011 classification into five Remoteness areas was extracted. The five remoteness areas are:
+
+- Major Cities of Australia
+- Inner Regional Australia
+- Outer Regional Australia
+- Remote Australia
+- Very Remote Australia
+
+The remoteness is evaluated on the basis of relative access to services, as measures by the Accessibility and Remoteness Index of Australia (ARIA+) by the Hugo Center for Population and Housing from the University of Adelaide.
+
+ABS Publication: 1270.0.55.005 - Australian Statistical Geography Standard (ASGS): Volume 5 - Remoteness Structure, July 2011  
+Data Cube: Statistical Area Level 1 2011 to Local Government Area 2011 (SA1_2011_RA_2011_AUST.csv)
+Retrieved from: https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.005July%202011?OpenDocument
+
+In addition, to match the provided Remoteness Areas for Statistical Area 1 coding to LGAs, the following correspondance file was used:
+
+ABS Publication: 1270.0.55.006 - Australian Statistical Geography Standard (ASGS): Correspondences, July 2011 
+Data Cube: Statistical Area Level 1 (SA1) to Remoteness Area (RA) ASGS Edition 2011 in csv. Format (1270055006_CG_SA1_2011_LGA_2011.xls), Worksheet "Table 3" exported in csv format
+Retrieved from: https://www.abs.gov.au/AUSSTATS/abs@.nsf/DetailsPage/1270.0.55.006July%202011?OpenDocument
+
+\vspace{5mm}
+
+# Abbreviations
+
+```{r abbreviations1, include = TRUE}
+abbr <- data.frame("Abbreviation" = c("DV", "IPV", "LGA", "NSW", "ABS", "BOSCAR", "SEIFA", "IRSAD", "WGEA"),
+                   "Description" = c("Domestic Violence", 
+                                     "Intimite Partner Violence", 
+                                     "Local Government Areas", 
+                                     "New South Wales, State of Australia", 
+                                     "Australian Bureau of Statistics", 
+                                     "Bureau of Crime Statistics and Research", 
+                                     "Socio-Economic Indexes for Areas", 
+                                     "Index of Relative Socio-economic Advantage and Disadvantage", 
+                                     "Workplace Gender Equality Agency"))
+
+kable(abbr, 
+      "latex",
+      caption = "Explainations of Abbreviations",
+      booktabs = T,
+      linesep = "")
+```
+
+
+```{r abbreviations2, include = TRUE}
+industries <- data.frame("Abbreviation" = c("agricult",
+                                            "mining",
+                                            "manufact",
+                                            "electr",
+                                            "construct",
+                                            "wholesale",
+                                            "retail",
+                                            "accom",
+                                            "transport",
+                                            "inform",
+                                            "finance",
+                                            "rental",
+                                            "profess",
+                                            "admin",
+                                            "public",
+                                            "education",
+                                            "healthcare",
+                                            "arts",
+                                            "others",
+                                            "unstated"),
+                   "Industry" = c("Agriculture, Forestry and Fishing",
+                                  "Mining",
+                                  "Manufacturing",
+                                  "Electricity,Gas, Water and Waste services",
+                                  "Construction",
+                                  "Wholesale Trade",
+                                  "Retail Trade",
+                                  "Accommodation and Food services",
+                                  "Transport, Postal and Warehousing",
+                                  "Information, Media and Telecommunications",
+                                  "Financial and Insurance services",
+                                  "Rental hiring and real estate services",
+                                  "Professional scientific and technical services",
+                                  "Administrative and support services",
+                                  "Public administration and safety",
+                                  "Education and Training",
+                                  "Health Care and Social assistance",
+                                  "Arts and Recreation services",
+                                  "Other Services",
+                                  "Inadequately described Not stated"))
+
+kable(industries, 
+      "latex",
+      caption = "Industry Abbreviations and Classifications",
+      booktabs = T,
+      linesep = "")
+```
+
+
+```{r abbreviations3, include = TRUE}
+remoteness <- data.frame("Remoteness Areas ABS" = c("Major Cities of Australia", 
+                                                    "Inner Regional Australia", 
+                                                    "Outer Regional Australia", 
+                                                    "Remote Australia", 
+                                                    "Very Remote Australia"),
+                   "Remoteness Classes used" = c("Major Cities",
+                                                 "Inner Regional",
+                                                 "Outer Regional/Remote",
+                                                 "Outer Regional/Remote",
+                                                 "Outer Regional/Remote"))
+
+kable(remoteness, 
+      "latex",
+      caption = "ABS Remoteness Areas and Translation to Remoteness Classes",
+      booktabs = T)
+```
+
+\newpage
+# Appendix
+
+The submission also includes interactive maps that showcase some of the variables used.
+Because these interactive maps are in HTML format, the files are submitted separately.  
+
+Please see   
+
+- Interactive_maps.html  
+
+- Interactive_maps.Rmd  
+
+
+
